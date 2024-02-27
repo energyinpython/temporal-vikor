@@ -219,23 +219,19 @@ def main():
     # calculate variability directions
     dir_list, dir_class = daria._direction(matrix, type)
 
-    # for next stage of research
-    df_varia_fin[met.upper()] = list(var)
+    # actions for next stage of research
+    df_varia_fin[met.upper() + ' variability'] = list(var)
     df_varia_fin[met.upper() + ' dir'] = list(dir_class)
 
-    df_results = pd.DataFrame()
-    df_results['Ai'] = list(df.columns)
+    # save results in csv
+    df_results = pd.DataFrame(index = df.columns)
     df_results['Variability'] = list(var)
     
     # list of directions
-    df_results['dir list'] = dir_list
-    
-    df_results.to_csv('results/scores_v.csv')
-    df_varia_fin = df_varia_fin.rename_axis('Country')
-    df_varia_fin.to_csv('results/FINAL_V.csv')
+    df_results['Direction'] = dir_list
 
     # final calculation
-    # data with alternatives' rankings' variability values calculated with Gini coeff and directions
+    # data with alternatives' rankings' variability values and directions
     G_df = copy.deepcopy(df_varia_fin)
 
     # data with alternatives' efficiency of performance calculated for the recent period
@@ -245,7 +241,7 @@ def main():
     # S = S_df.mean(axis = 1).to_numpy()
     S = S_df['2022'].to_numpy()
 
-    G = G_df[met.upper()].to_numpy()
+    G = G_df[met.upper() + ' variability'].to_numpy()
     dir = G_df[met.upper() + ' dir'].to_numpy()
 
     # update efficiencies using DARIA methodology
@@ -258,11 +254,9 @@ def main():
     summary_corrs = summary_corrs.rename_axis('Country')
     summary_corrs.to_csv('./results/summary.csv')
 
-    results_final = pd.DataFrame(index = country_names)
-    results_final['Temporal VIKOR pref'] = final_S
-    results_final['Temporal VIKOR rank'] = rank
-    results_final = results_final.rename_axis('Country')
-    results_final.to_csv('./results/results_final.csv')
+    df_results['Temporal VIKOR pref'] = final_S
+    df_results['Temporal VIKOR rank'] = rank
+    df_results.to_csv('./results/results_final.csv')
     
 
     # ===================================================================
